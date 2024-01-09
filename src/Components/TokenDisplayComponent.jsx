@@ -10,7 +10,7 @@ import { Toast } from './NotificationToast'
 function TokenDisplayComponent({ tokens, userAddress, selectedChain }) {
   const [tokenData, setTokenData] = useState([])
   const [toasts, setToasts] = useState([])
-
+  // To calculate percent change of balance
   const calculatePercentageChange = (currentBalance, historicalBalance) => {
     if (historicalBalance === 0) {
       return 'N/A' // To handle divide by zero
@@ -20,11 +20,11 @@ function TokenDisplayComponent({ tokens, userAddress, selectedChain }) {
       100
     ).toFixed(2)
   }
-
+  // Add notification to toastlist that will be displayed to user for notification
   const addToast = (message) => {
     setToasts((toasts) => [...toasts, message])
   }
-
+  // Filtering tokens based on chains selected
   useEffect(() => {
     const filteredTokens =
       selectedChain === 'All'
@@ -42,23 +42,30 @@ function TokenDisplayComponent({ tokens, userAddress, selectedChain }) {
     filteredTokens.forEach(async (token, index) => {
       let currentBalance = 'Error'
       let historicalBalance = 'Error'
-
       try {
         if (token.tokenType === 'Native' && userAddress) {
+          // Fetching Native Token Balance
+
           currentBalance = await fetchNativeTokenBalance(
             token.rpcUrl,
             userAddress
           )
+          // Fetching Historical Native Token Balance
+
           historicalBalance = await fetchHistoricalNativeTokenBalance(
             token.rpcUrl,
             userAddress
           )
         } else if (token.tokenType === 'ERC-20') {
+          // Fetching ERC-20 Token Balance
+
           currentBalance = await fetchERC20TokenBalance(
             token.rpcUrl,
             token.tokenAddress,
             userAddress
           )
+          // Fetching Historical ERC-20 Token Balance
+
           historicalBalance = await fetchHistoricalERC20TokenBalance(
             token.rpcUrl,
             token.tokenAddress,
